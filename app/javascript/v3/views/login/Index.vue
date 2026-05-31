@@ -331,6 +331,9 @@ export default {
               </router-link>
             </p>
           </FormInput>
+          <p class="text-sm text-center font-medium text-n-brand">
+            hola desde pepito!
+          </p>
           <NextButton
             lg
             type="submit"
@@ -347,11 +350,5 @@ export default {
         <Spinner color-scheme="primary" size="" />
       </div>
     </section>
-    <p
-      v-if="globalConfig.gitSha"
-      class="mt-6 text-xs text-center text-n-slate-10 font-mono"
-    >
-      Deploy: {{ globalConfig.gitSha.slice(0, 7) }}
-    </p>
   </main>
 </template>
