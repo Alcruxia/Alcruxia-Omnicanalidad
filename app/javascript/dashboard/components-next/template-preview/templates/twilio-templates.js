@@ -129,18 +129,18 @@ export const twilioTemplates = [
     template_type: 'quick_reply',
   },
   {
-    body: 'What type of Chatwoot installation are you using? Select "Chatwoot Cloud" if you are using app.chatwoot.com, otherwise select "Self-hosted Chatwoot".',
+    body: 'What type of Alcruxia installation are you using? Select "Alcruxia Cloud" if you are using chat.alcruxia.com, otherwise select "Self-hosted Alcruxia".',
     types: {
       'twilio/quick-reply': {
-        body: 'What type of Chatwoot installation are you using? Select "Chatwoot Cloud" if you are using app.chatwoot.com, otherwise select "Self-hosted Chatwoot".',
+        body: 'What type of Alcruxia installation are you using? Select "Alcruxia Cloud" if you are using chat.alcruxia.com, otherwise select "Self-hosted Alcruxia".',
         actions: [
           {
-            id: 'Chatwoot Cloud_payload',
-            title: 'Chatwoot Cloud',
+            id: 'Alcruxia Cloud_payload',
+            title: 'Alcruxia Cloud',
           },
           {
-            id: 'Self-hosted Chatwoot_payload',
-            title: 'Self-hosted Chatwoot',
+            id: 'Self-hosted Alcruxia_payload',
+            title: 'Self-hosted Alcruxia',
           },
         ],
       },
