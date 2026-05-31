@@ -62,13 +62,33 @@ jobs:
           host: ${{ secrets.PROD_SSH_HOST }}
           username: ${{ secrets.PROD_SSH_USER }}
           key: ${{ secrets.PROD_SSH_KEY }}
-          envs: GITHUB_TOKEN,GITHUB_ACTOR
+          envs: GITHUB_TOKEN,GITHUB_ACTOR,GITHUB_SHA
           script: |
-            cd ~/alcruxia-omnicanalidad
+            # Login a GHCR
             echo "$GITHUB_TOKEN" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
-            docker compose -f docker-compose.prod.yaml pull
-            docker compose -f docker-compose.prod.yaml up -d --remove-orphans
-            docker compose -f docker-compose.prod.yaml exec -T rails bundle exec rails db:chatwoot_prepare
+
+            # Clonar o actualizar el repo
+            if [ -d ~/alcruxia-omnicanalidad-repo ]; then
+              cd ~/alcruxia-omnicanalidad-repo
+              git fetch origin prod
+              git reset --hard origin/prod
+            else
+              git clone --branch prod https://x-access-token:${GITHUB_TOKEN}@github.com/Alcruxia/Alcruxia-Omnicanalidad.git ~/alcruxia-omnicanalidad-repo
+              cd ~/alcruxia-omnicanalidad-repo
+            fi
+
+            # Copiar archivos de configuración del servidor (no están en el repo)
+            cp ~/alcruxia-omnicanalidad/.env.prod ~/alcruxia-omnicanalidad-repo/.env.prod
+            mkdir -p ~/alcruxia-omnicanalidad-repo/caddy
+            cp ~/alcruxia-omnicanalidad/caddy/Caddyfile ~/alcruxia-omnicanalidad-repo/caddy/Caddyfile
+
+            # Deploy
+            cd ~/alcruxia-omnicanalidad-repo
+            docker compose -f docker-compose.prod.yaml --env-file .env.prod pull
+            docker compose -f docker-compose.prod.yaml --env-file .env.prod up -d --remove-orphans
+            docker compose -f docker-compose.prod.yaml exec -T rails bundle exec rails db:chatwoot_prepare || true
+
+            # Limpieza
             docker logout ghcr.io
             docker image prune -f
             echo "Deploy completado: $(date)"

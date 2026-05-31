@@ -62,13 +62,33 @@ jobs:
           host: ${{ secrets.STAGING_SSH_HOST }}
           username: ${{ secrets.STAGING_SSH_USER }}
           key: ${{ secrets.STAGING_SSH_KEY }}
-          envs: GITHUB_TOKEN,GITHUB_ACTOR
+          envs: GITHUB_TOKEN,GITHUB_ACTOR,GITHUB_SHA
           script: |
-            cd ~/alcruxia-omnicanalidad-stg
+            # Login a GHCR
             echo "$GITHUB_TOKEN" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
-            docker compose -f docker-compose.stg.yaml pull
-            docker compose -f docker-compose.stg.yaml up -d --remove-orphans
-            docker compose -f docker-compose.stg.yaml exec -T rails bundle exec rails db:chatwoot_prepare
+
+            # Clonar o actualizar el repo
+            if [ -d ~/alcruxia-omnicanalidad-stg-repo ]; then
+              cd ~/alcruxia-omnicanalidad-stg-repo
+              git fetch origin stg
+              git reset --hard origin/stg
+            else
+              git clone --branch stg https://x-access-token:${GITHUB_TOKEN}@github.com/Alcruxia/Alcruxia-Omnicanalidad.git ~/alcruxia-omnicanalidad-stg-repo
+              cd ~/alcruxia-omnicanalidad-stg-repo
+            fi
+
+            # Copiar archivos de configuración del servidor (no están en el repo)
+            cp ~/alcruxia-omnicanalidad-stg/.env.stg ~/alcruxia-omnicanalidad-stg-repo/.env.stg
+            mkdir -p ~/alcruxia-omnicanalidad-stg-repo/caddy
+            cp ~/alcruxia-omnicanalidad-stg/caddy/Caddyfile ~/alcruxia-omnicanalidad-stg-repo/caddy/Caddyfile
+
+            # Deploy
+            cd ~/alcruxia-omnicanalidad-stg-repo
+            docker compose -f docker-compose.stg.yaml --env-file .env.stg pull
+            docker compose -f docker-compose.stg.yaml --env-file .env.stg up -d --remove-orphans
+            docker compose -f docker-compose.stg.yaml exec -T rails bundle exec rails db:chatwoot_prepare || true
+
+            # Limpieza
             docker logout ghcr.io
             docker image prune -f
             echo "Deploy staging completado: $(date)"
