@@ -1,0 +1,3 @@
+chat.alcruxia.com {
+    reverse_proxy rails:3000
+}
