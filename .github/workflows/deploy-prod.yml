@@ -64,8 +64,15 @@ jobs:
           key: ${{ secrets.PROD_SSH_KEY }}
           envs: GITHUB_TOKEN,GITHUB_ACTOR,GITHUB_SHA
           script: |
+            # Exportar REDIS_PASSWORD para que Docker Compose la lea correctamente
+            export REDIS_PASSWORD=$(grep ^REDIS_PASSWORD ~/alcruxia-omnicanalidad/.env.prod | cut -d'=' -f2)
+
             # Login a GHCR
             echo "$GITHUB_TOKEN" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
+
+            # Bajar contenedores que usen puerto 3000
+            docker ps -q --filter "publish=3000" | xargs -r docker stop
+            docker ps -aq --filter "publish=3000" | xargs -r docker rm
 
             # Clonar o actualizar el repo
             if [ -d ~/alcruxia-omnicanalidad-repo ]; then
@@ -77,18 +84,29 @@ jobs:
               cd ~/alcruxia-omnicanalidad-repo
             fi
 
-            # Copiar archivos de configuración del servidor (no están en el repo)
-            cp ~/alcruxia-omnicanalidad/.env.prod ~/alcruxia-omnicanalidad-repo/.env.prod
-            mkdir -p ~/alcruxia-omnicanalidad-repo/caddy
-            cp ~/alcruxia-omnicanalidad/caddy/Caddyfile ~/alcruxia-omnicanalidad-repo/caddy/Caddyfile
-
-            # Deploy
             cd ~/alcruxia-omnicanalidad-repo
+
+            # Copiar configuración del servidor
+            cp ~/alcruxia-omnicanalidad/.env.prod .env.prod
+            mkdir -p caddy
+            cp ~/alcruxia-omnicanalidad/caddy/Caddyfile caddy/Caddyfile
+
+            # Bajar stack actual
+            docker compose -f docker-compose.prod.yaml --env-file .env.prod down --remove-orphans || true
+
+            # Pull y levantar
             docker compose -f docker-compose.prod.yaml --env-file .env.prod pull
             docker compose -f docker-compose.prod.yaml --env-file .env.prod up -d --remove-orphans
-            docker compose -f docker-compose.prod.yaml exec -T rails bundle exec rails db:chatwoot_prepare || true
+
+            # Migraciones
+            sleep 20
+            docker compose -f docker-compose.prod.yaml exec -T rails bundle exec rails db:chatwoot_prepare 2>&1 | grep -v "pg_stat_statements" || true
 
             # Limpieza
             docker logout ghcr.io
-            docker image prune -f
+            docker container prune -f
+            docker image prune -af --filter "until=24h"
+            docker volume prune -f --filter "label!=keep"
+            docker network prune -f
+
             echo "Deploy completado: $(date)"
