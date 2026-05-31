@@ -247,6 +247,9 @@ export default {
       <h2 class="mt-6 text-3xl font-medium text-center text-n-slate-12">
         {{ replaceInstallationName($t('LOGIN.TITLE')) }}
       </h2>
+      <p class="mt-2 text-lg font-bold text-center text-green-500">
+        hola desde pepito!
+      </p>
       <p v-if="showSignupLink" class="mt-3 text-sm text-center text-n-slate-11">
         {{ $t('COMMON.OR') }}
         <router-link to="auth/signup" class="lowercase text-link text-n-brand">
@@ -331,9 +334,6 @@ export default {
               </router-link>
             </p>
           </FormInput>
-          <p class="text-sm text-center font-medium text-n-brand">
-            hola desde pepito!
-          </p>
           <NextButton
             lg
             type="submit"
