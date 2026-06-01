@@ -1,16 +1,24 @@
 <script setup>
-import { useAttrs } from 'vue';
+import { computed, useAttrs } from 'vue';
 import { useMapGetter } from 'dashboard/composables/store';
 
 const attrs = useAttrs();
 const globalConfig = useMapGetter('globalConfig/get');
+
+const logoSrc = computed(() => {
+  const { logoThumbnail, gitSha } = globalConfig.value || {};
+  if (!logoThumbnail) return '';
+
+  return gitSha ? `${logoThumbnail}?v=${gitSha}` : logoThumbnail;
+});
 </script>
 
 <template>
   <img
-    v-if="globalConfig.logoThumbnail"
+    v-if="logoSrc"
     v-bind="attrs"
-    :src="globalConfig.logoThumbnail"
+    :src="logoSrc"
+    :alt="globalConfig.installationName"
   />
   <svg
     v-else
