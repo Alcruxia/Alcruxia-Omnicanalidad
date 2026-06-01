@@ -20,7 +20,7 @@ const prepareData = sourceData => {
     datasets: [
       {
         type: 'bar',
-        backgroundColor: 'rgb(31, 147, 255)',
+        backgroundColor: 'rgb(201, 153, 58)',
         yAxisID: 'y',
         label: 'Conversations',
         data: data,

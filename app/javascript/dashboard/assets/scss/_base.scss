@@ -197,6 +197,12 @@ code {
   }
 }
 
+// Checkbox / radio accent (native inputs)
+input[type='checkbox']:not(.reset-base),
+input[type='radio']:not(.reset-base) {
+  accent-color: #C9993A;
+}
+
 // Table
 table {
   @apply border-spacing-0 text-sm w-full;
