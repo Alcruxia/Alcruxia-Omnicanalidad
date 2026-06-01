@@ -1,6 +1,6 @@
 services:
   base: &base
-    image: ghcr.io/alcruxia/chatwoot:${IMAGE_TAG:-prod}
+    image: ghcr.io/alcruxia/alcruxia-omnicanalidad:${IMAGE_TAG:-prod}
     env_file: .env.prod
     volumes:
       - storage:/app/storage

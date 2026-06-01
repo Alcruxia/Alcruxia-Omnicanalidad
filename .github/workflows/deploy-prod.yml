@@ -4,6 +4,10 @@ on:
   push:
     branches: [prod]
 
+permissions:
+  contents: read
+  packages: write
+
 jobs:
   build:
     name: Build & Push imagen Docker
@@ -30,7 +34,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ghcr.io/alcruxia/chatwoot
+          images: ghcr.io/alcruxia/alcruxia-omnicanalidad
           tags: |
             type=raw,value=prod
             type=sha,prefix=prod-
