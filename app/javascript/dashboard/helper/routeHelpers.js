@@ -3,6 +3,10 @@ import {
   getUserPermissions,
   getCurrentAccount,
 } from './permissionsHelper';
+import {
+  evaluatePolicy,
+  resolveRoutePolicyMeta,
+} from './policyHelper';
 
 import {
   ROLES,
@@ -15,6 +19,24 @@ import {
 export const routeIsAccessibleFor = (route, userPermissions = []) => {
   const { meta: { permissions: routePermissions = [] } = {} } = route;
   return hasPermissions(routePermissions, userPermissions);
+};
+
+export const routeIsAllowedByPolicy = (to, user, getters, getRoutes) => {
+  const accountId = Number(to.params.accountId);
+  const config = window.chatwootConfig || {};
+  const meta = resolveRoutePolicyMeta(to, getRoutes);
+
+  return evaluatePolicy({
+    featureFlag: meta.featureFlag,
+    permissions: meta.permissions,
+    installationTypes: meta.installationTypes,
+    userPermissions: getUserPermissions(user, accountId),
+    isFeatureEnabledOnAccount: flag =>
+      getters['accounts/isFeatureEnabledonAccount'](accountId, flag),
+    isOnChatwootCloud: getters['globalConfig/isOnChatwootCloud'],
+    isACustomBrandedInstance: getters['globalConfig/isACustomBrandedInstance'],
+    isEnterprise: config.isEnterprise === 'true',
+  });
 };
 
 export const defaultRedirectPage = (to, permissions) => {
@@ -37,7 +59,7 @@ export const defaultRedirectPage = (to, permissions) => {
   return `accounts/${accountId}/${route ? route.path : 'dashboard'}`;
 };
 
-const validateActiveAccountRoutes = (to, user) => {
+const validateActiveAccountRoutes = (to, user, getters, getRoutes) => {
   // If the current account is active, then check for the route permissions
   const accountDashboardURL = `accounts/${to.params.accountId}/dashboard`;
 
@@ -49,11 +71,20 @@ const validateActiveAccountRoutes = (to, user) => {
   const userPermissions = getUserPermissions(user, to.params.accountId);
 
   const isAccessible = routeIsAccessibleFor(to, userPermissions);
-  // If the route is not accessible for the user, return to dashboard screen
-  return isAccessible ? null : defaultRedirectPage(to, userPermissions);
+  if (!isAccessible) {
+    return defaultRedirectPage(to, userPermissions);
+  }
+
+  const isAllowedByPolicy = routeIsAllowedByPolicy(
+    to,
+    user,
+    getters,
+    getRoutes
+  );
+  return isAllowedByPolicy ? null : defaultRedirectPage(to, userPermissions);
 };
 
-export const validateLoggedInRoutes = (to, user) => {
+export const validateLoggedInRoutes = (to, user, getters, getRoutes) => {
   const currentAccount = getCurrentAccount(user, Number(to.params.accountId));
   // If current account is missing, either user does not have
   // access to the account or the account is deleted, return to login screen
@@ -64,7 +95,7 @@ export const validateLoggedInRoutes = (to, user) => {
   const isCurrentAccountActive = currentAccount.status === 'active';
 
   if (isCurrentAccountActive) {
-    return validateActiveAccountRoutes(to, user);
+    return validateActiveAccountRoutes(to, user, getters, getRoutes);
   }
 
   // If the current account is not active, then redirect the user to the suspended screen

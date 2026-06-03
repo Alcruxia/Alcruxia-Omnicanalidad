@@ -50,7 +50,12 @@ export const validateAuthenticateRoutePermission = async (to, next) => {
     return next(frontendURL(`accounts/${routeAccountId}/dashboard`));
   }
 
-  const nextRoute = validateLoggedInRoutes(to, store.getters.getCurrentUser);
+  const nextRoute = validateLoggedInRoutes(
+    to,
+    store.getters.getCurrentUser,
+    store.getters,
+    () => router.getRoutes()
+  );
   return nextRoute ? next(frontendURL(nextRoute)) : next();
 };
 

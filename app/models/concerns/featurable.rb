@@ -62,10 +62,10 @@ module Featurable
   private
 
   def enable_default_features
-    config = InstallationConfig.find_by(name: 'ACCOUNT_LEVEL_FEATURE_DEFAULTS')
-    return true if config.blank?
+    enable_features(*default_enabled_feature_names)
+  end
 
-    features_to_enabled = config.value.select { |f| f[:enabled] }.pluck(:name)
-    enable_features(*features_to_enabled)
+  def default_enabled_feature_names
+    FEATURE_LIST.reject { |feature| feature['premium'] || feature['deprecated'] }.pluck('name')
   end
 end

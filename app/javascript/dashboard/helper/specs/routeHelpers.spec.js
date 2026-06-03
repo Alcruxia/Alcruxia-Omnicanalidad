@@ -67,10 +67,22 @@ describe('#defaultRedirectPage', () => {
 });
 
 describe('#validateLoggedInRoutes', () => {
+  const mockGetters = {
+    'accounts/isFeatureEnabledonAccount': () => true,
+    'globalConfig/isOnChatwootCloud': false,
+    'globalConfig/isACustomBrandedInstance': false,
+  };
+  const mockGetRoutes = () => [];
+
   describe('when account access is missing', () => {
     it('should return the login route', () => {
       expect(
-        validateLoggedInRoutes({ params: { accountId: 1 } }, { accounts: [] })
+        validateLoggedInRoutes(
+          { params: { accountId: 1 } },
+          { accounts: [] },
+          mockGetters,
+          mockGetRoutes
+        )
       ).toEqual(`app/login`);
     });
   });
@@ -84,7 +96,9 @@ describe('#validateLoggedInRoutes', () => {
               params: { accountId: 1 },
               meta: { permissions: ['agent'] },
             },
-            { accounts: [{ id: 1, role: 'agent', status: 'suspended' }] }
+            { accounts: [{ id: 1, role: 'agent', status: 'suspended' }] },
+            mockGetters,
+            mockGetRoutes
           )
         ).toEqual(`accounts/1/suspended`);
       });
@@ -109,7 +123,9 @@ describe('#validateLoggedInRoutes', () => {
                     status: 'active',
                   },
                 ],
-              }
+              },
+              mockGetters,
+              mockGetRoutes
             )
           ).toEqual(null);
         });
@@ -123,7 +139,9 @@ describe('#validateLoggedInRoutes', () => {
                 params: { accountId: 1 },
                 meta: { permissions: ['administrator'] },
               },
-              { accounts: [{ id: 1, role: 'agent', status: 'active' }] }
+              { accounts: [{ id: 1, role: 'agent', status: 'active' }] },
+              mockGetters,
+              mockGetRoutes
             )
           ).toEqual(`accounts/1/dashboard`);
         });
@@ -133,7 +151,9 @@ describe('#validateLoggedInRoutes', () => {
           expect(
             validateLoggedInRoutes(
               { name: 'account_suspended', params: { accountId: 1 } },
-              { accounts: [{ id: 1, role: 'agent', status: 'active' }] }
+              { accounts: [{ id: 1, role: 'agent', status: 'active' }] },
+              mockGetters,
+              mockGetRoutes
             )
           ).toEqual(`accounts/1/dashboard`);
         });

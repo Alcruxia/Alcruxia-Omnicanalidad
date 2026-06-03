@@ -19,18 +19,18 @@
   help_url: https://chwt.app/hc/fb
 - name: conversation_unread_counts
   display_name: Conversation Unread Counts
-  enabled: false
+  enabled: true
   chatwoot_internal: true
 - name: ip_lookup
   display_name: IP Lookup
-  enabled: false
+  enabled: true
 - name: disable_branding
   display_name: Disable Branding
   enabled: false
   premium: true
 - name: email_continuity_on_api_channel
   display_name: Email Continuity on API Channel
-  enabled: false
+  enabled: true
 - name: help_center
   display_name: Help Center
   enabled: true
@@ -76,7 +76,7 @@
   enabled: true
 - name: report_rollup
   display_name: Report Rollup
-  enabled: false
+  enabled: true
 - name: channel_website
   display_name: Website Channel
   enabled: true
@@ -96,10 +96,10 @@
   enabled: true
 - name: custom_reply_email
   display_name: Custom Reply Email
-  enabled: false
+  enabled: true
 - name: custom_reply_domain
   display_name: Custom Reply Domain
-  enabled: false
+  enabled: true
 - name: audit_logs
   display_name: Audit Logs
   enabled: false
@@ -118,7 +118,7 @@
   deprecated: true
 - name: inbox_view
   display_name: Inbox View
-  enabled: false
+  enabled: true
   chatwoot_internal: true
 - name: sla
   display_name: SLA
@@ -132,7 +132,7 @@
   chatwoot_internal: true
 - name: linear_integration
   display_name: Linear Integration
-  enabled: false
+  enabled: true
 - name: captain_integration
   display_name: Captain
   enabled: false
@@ -155,25 +155,25 @@
   chatwoot_internal: true
 - name: shopify_integration
   display_name: Shopify Integration
-  enabled: false
+  enabled: true
   chatwoot_internal: true
 - name: search_with_gin
   display_name: Search messages with GIN
-  enabled: false
+  enabled: true
   chatwoot_internal: true
 - name: channel_instagram
   display_name: Instagram Channel
   enabled: true
 - name: crm_integration
   display_name: CRM Integration
-  enabled: false
+  enabled: true
 - name: channel_voice
   display_name: Voice Channel
   enabled: false
   premium: true
 - name: notion_integration
   display_name: Notion Integration
-  enabled: false
+  enabled: true
 - name: captain_integration_v2
   display_name: Captain V2
   enabled: false
@@ -184,10 +184,10 @@
   deprecated: true
 - name: whatsapp_campaign
   display_name: WhatsApp Campaign
-  enabled: false
+  enabled: true
 - name: crm_v2
   display_name: CRM V2
-  enabled: false
+  enabled: true
   chatwoot_internal: true
 - name: assignment_v2
   display_name: Assignment V2
@@ -214,7 +214,7 @@
   # This feature is temporary only to migrate reply mailer to new email builder
   # Once the migration is done, this feature can be removed
   display_name: Reply Mailer Migration
-  enabled: false
+  enabled: true
   chatwoot_internal: true
 - name: quoted_email_reply
   display_name: Quoted Email Reply
