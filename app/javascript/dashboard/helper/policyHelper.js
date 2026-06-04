@@ -1,10 +1,18 @@
-import { PREMIUM_FEATURES } from 'dashboard/featureFlags';
+import {
+  PREMIUM_FEATURES,
+  SELF_HOSTED_RESTRICTED_FEATURES,
+} from 'dashboard/featureFlags';
 import { INSTALLATION_TYPES } from 'dashboard/constants/installationTypes';
 import { hasPermissions } from './permissionsHelper';
 
 export const isPremiumFeature = featureFlag => {
   if (!featureFlag) return false;
   return PREMIUM_FEATURES.includes(featureFlag);
+};
+
+export const isSelfHostedRestrictedFeature = featureFlag => {
+  if (!featureFlag) return false;
+  return SELF_HOSTED_RESTRICTED_FEATURES.includes(featureFlag);
 };
 
 export const checkInstallationType = (
@@ -61,8 +69,12 @@ export const evaluatePolicy = ({
     );
   }
 
-  // Self-hosted: only show features explicitly enabled on the account
-  return isFeatureEnabledOnAccount(flag);
+  // Self-hosted: hide paid-plan features only; standard features stay available
+  if (isSelfHostedRestrictedFeature(flag)) {
+    return isFeatureEnabledOnAccount(flag);
+  }
+
+  return true;
 };
 
 export const evaluatePaywallVisibility = ({
