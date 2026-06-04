@@ -62,10 +62,6 @@ module Featurable
   private
 
   def enable_default_features
-    enable_features(*default_enabled_feature_names)
-  end
-
-  def default_enabled_feature_names
-    FEATURE_LIST.reject { |feature| feature['premium'] || feature['deprecated'] }.pluck('name')
+    true
   end
 end

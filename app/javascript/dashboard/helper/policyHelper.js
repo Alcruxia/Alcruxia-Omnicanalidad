@@ -69,12 +69,12 @@ export const evaluatePolicy = ({
     );
   }
 
-  // Self-hosted: hide paid-plan features only; standard features stay available
+  // Self-hosted: always hide paid-plan features; standard features follow account flags
   if (isSelfHostedRestrictedFeature(flag)) {
-    return isFeatureEnabledOnAccount(flag);
+    return false;
   }
 
-  return true;
+  return isFeatureEnabledOnAccount(flag);
 };
 
 export const evaluatePaywallVisibility = ({
