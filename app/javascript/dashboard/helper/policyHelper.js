@@ -42,7 +42,9 @@ export const evaluatePolicy = ({
   isACustomBrandedInstance = false,
   isEnterprise = false,
 }) => {
-  if (!hasPermissions(permissions, userPermissions)) return false;
+  if (permissions.length > 0 && !hasPermissions(permissions, userPermissions)) {
+    return false;
+  }
   if (
     !checkInstallationType(installationTypes, {
       isEnterprise,
