@@ -46,6 +46,11 @@ export const evaluatePolicy = ({
 
   const flag = featureFlag || '';
 
+  // Routes without a feature flag are accessible once permissions/installation pass
+  if (!flag) {
+    return true;
+  }
+
   if (isACustomBrandedInstance) {
     return isFeatureEnabledOnAccount(flag);
   }
