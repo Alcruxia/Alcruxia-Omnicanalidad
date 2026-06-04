@@ -46,9 +46,7 @@ module Featurable
   end
 
   def all_features
-    if new_record?
-      return default_enabled_feature_names.index_with(true)
-    end
+    return yaml_default_features if new_record?
 
     FEATURE_LIST.pluck('name').index_with do |feature_name|
       feature_enabled?(feature_name)
@@ -66,13 +64,20 @@ module Featurable
   private
 
   def enable_default_features
-    # Super admin submit sends checked boxes only; if none set yet, enable all
+    # Super admin submit sends checked boxes only; if none set yet, use features.yml defaults
     return true if feature_flags.positive?
 
     enable_features(*default_enabled_feature_names)
   end
 
+  def yaml_default_features
+    FEATURE_LIST.reject { |feature| feature['deprecated'] }
+                .to_h { |feature| [feature['name'], feature.fetch('enabled', false)] }
+  end
+
   def default_enabled_feature_names
-    FEATURE_LIST.reject { |feature| feature['deprecated'] }.pluck('name')
+    FEATURE_LIST.reject { |feature| feature['deprecated'] }
+                .select { |feature| feature.fetch('enabled', false) }
+                .pluck('name')
   end
 end

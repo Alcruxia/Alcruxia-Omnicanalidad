@@ -222,7 +222,7 @@
   deprecated: true
 - name: companies
   display_name: Companies
-  enabled: false
+  enabled: true
   premium: true
 - name: channel_tiktok
   display_name: TikTok Channel
@@ -233,12 +233,12 @@
   premium: true
 - name: captain_tasks
   display_name: Captain Tasks
-  enabled: true
+  enabled: false
 - name: conversation_required_attributes
   display_name: Required Conversation Attributes
-  enabled: false
+  enabled: true
   premium: true
 - name: advanced_assignment
   display_name: Advanced Assignment
-  enabled: false
+  enabled: true
   premium: true
