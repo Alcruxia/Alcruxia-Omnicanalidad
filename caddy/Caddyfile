@@ -1,3 +1,10 @@
 chat.alcruxia.com {
-    reverse_proxy rails:3000
+	# Normalize underscore/hyphen token headers → Api-Access-Token (Rails expects HTTP_API_ACCESS_TOKEN)
+	@underscore_token header_regexp api_access_token .+
+	request_header @underscore_token Api-Access-Token {http.request.header.api_access_token}
+
+	@hyphen_token header_regexp api-access-token .+
+	request_header @hyphen_token Api-Access-Token {http.request.header.api-access-token}
+
+	reverse_proxy rails:3000
 }
