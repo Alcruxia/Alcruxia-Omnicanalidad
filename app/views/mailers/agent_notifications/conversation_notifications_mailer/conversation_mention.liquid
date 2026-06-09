@@ -1,7 +1,7 @@
 <p>Hi {{user.available_name}}, </p>
 
 <p>You've been mentioned in a conversation. <b>{{message.sender_display_name}}</b> wrote:</p>
-<blockquote style="box-sizing:border-box; padding:8px 16px; margin:0 0 20px; font-size:14px; border-left:5px solid #eeeeee">
+<blockquote style="box-sizing:border-box; padding:8px 16px; margin:0 0 20px; font-size:14px; border-left:5px solid #FFECC5">
   {{message.text_content}}
 </blockquote>
 
@@ -17,7 +17,7 @@
     </h4>
   </div>
 
-  <div style="padding: 10px 20px; margin: 5px 0 20px 0; background: #F2F3F7; border-radius: 10px; display: inline-block; font-family: 'Helvetica Neue',Tahoma,Arial,sans-serif; text-align: start; unicode-bidi: plaintext;">
+  <div style="padding: 10px 20px; margin: 5px 0 20px 0; background: #FFF9EE; border-radius: 10px; display: inline-block; font-family: 'Helvetica Neue',Tahoma,Arial,sans-serif; text-align: start; unicode-bidi: plaintext;">
     {% if chat_message.content %}
       {{chat_message.content}}
     {% endif %}
